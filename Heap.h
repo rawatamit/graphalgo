@@ -3,9 +3,6 @@
 
 #include <cassert>
 
-#include <iostream>
-
-
 struct HeapEntry {
     unsigned u, v;
     double wt;

@@ -2,6 +2,7 @@
 #define HIDDEN_PATHS_H
 
 #include <vector>
+#include <iostream>
 #include "Heap.h"
 #include "ShortestPaths.h"
 
