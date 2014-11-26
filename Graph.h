@@ -25,6 +25,10 @@ public:
         return vertexmap.count(u) != 0;
     }
 
+    bool is_node(unsigned u) const {
+        return u >= 0 and u < number_of_vertices();
+    }
+
     bool is_edge(T const& u, T const& v) const {
         // make sure the vertices are valid
         assert(is_node(u) and is_node(v));
@@ -33,9 +37,21 @@ public:
         unsigned iu = vertexmap[u];
         unsigned iv = vertexmap[v];
         for (auto edge : adj[iu]) {
-            if (edge.v == iv)
+            if (edge.other(iu) == iv)
                 return true;
         }
+        return false;
+    }
+
+    bool is_edge(unsigned u, unsigned  v) const {
+        // make sure the vertices are valid
+        assert(is_node(u) and is_node(v));
+
+        for (auto edge : adj[u]) {
+            if (edge.other(u) == v)
+                return true;
+        }
+
         return false;
     }
 
@@ -46,11 +62,25 @@ public:
         // get the integer mappings
         unsigned iu = vertexmap[u];
         unsigned iv = vertexmap[v];
+        if (iu == iv) return 0.0;
         for (auto edge : adj[iu]) {
             if (edge.v == iv)
-                return edge.wt;
+                return edge.weight();
         }
 
+        // vertices are not connected
+        return std::numeric_limits<double>::max();
+    }
+
+    double edge_weight(unsigned u, unsigned v) const {
+        // make sure the vertices are valid
+        assert(is_node(u) and is_node(v));
+
+        if (u == v) return 0.0;
+        for (auto edge : adj[u]) {
+            if (edge.other(u) == v)
+                return edge.weight();
+        }
         // vertices are not connected
         return std::numeric_limits<double>::max();
     }
@@ -61,12 +91,12 @@ public:
     }
 
     T const& vertex_mapping(unsigned u) const {
-        assert(u >= 0 and u < number_of_vertices());
+        assert(is_node(u));
         return integermap[u];
     }
 
     std::vector<Edge> const& adj_list(unsigned u) const {
-        assert(u >= 0 and u < number_of_vertices());
+        assert(is_node(u));
         return adj[u];
     }
 

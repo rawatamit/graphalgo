@@ -34,5 +34,6 @@ int main(int argc, char* argv[]) {
     fclose(in);
     //g.print(std::cout);
     //dijkstra(g, std::string("a"));
+    hidden_paths(g);
     return 0;
 }

@@ -51,9 +51,17 @@ public:
     }
 
     virtual ~ShortestPaths() {
+        for (auto i = 0; i < n; ++i)
+            delete[] paths[i];
+        delete[] paths;
     }
 
     PathEntry const& get(unsigned u, unsigned v) const {
+        assert(u >= 0 and u < n and v >= 0 and v < n);
+        return paths[u][v];
+    }
+
+    PathEntry& get(unsigned u, unsigned v) {
         assert(u >= 0 and u < n and v >= 0 and v < n);
         return paths[u][v];
     }

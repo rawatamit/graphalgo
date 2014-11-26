@@ -3,6 +3,9 @@
 
 #include <cassert>
 
+#include <iostream>
+
+
 struct HeapEntry {
     unsigned u, v;
     double wt;
@@ -21,6 +24,12 @@ struct HeapEntry {
         return false;
     }
 };
+
+bool cmp_lt(HeapEntry const* a, HeapEntry const* b) {
+    if (a->wt < b->wt) return true;
+    if (b->wt < a->wt) return false;
+    return false;
+}
 
 // Most of the code is converted from the heapq module in python
 // Thanks a lot to those people!
@@ -46,8 +55,34 @@ public:
     }
 
     void add(HeapEntry* item) {
-        assert(size >= 0 and size < capacity-1);
-        array[size++] = item;
+        assert(size >= 0 and size < capacity);
+        update(item, size);
+        ++size;
+    }
+
+    bool empty() const {
+        return size == 0;
+    }
+
+    HeapEntry* pop() {
+        assert(size > 0);
+
+        // only a single element
+        if (size == 1) {
+            size = 0;
+            return array[0];
+        }
+
+        HeapEntry* lastitem = array[--size];
+        HeapEntry* retitem = array[0];
+        update(lastitem, 0);
+        siftup(0);
+        return retitem;
+    }
+
+    HeapEntry* top() {
+        assert(size > 0);
+        return array[0];
     }
 
     void heapify() {
@@ -69,7 +104,7 @@ public:
         while (pos > startpos) {
             unsigned parentpos = (pos - 1) >> 1;
             HeapEntry* parent = array[parentpos];
-            if (item < parent) {
+            if (cmp_lt(item, parent)) {
                 update(parent, pos);
                 pos = parentpos;
                 continue;
@@ -85,7 +120,7 @@ public:
         unsigned childpos = 2 * pos + 1;
         while (childpos < size) {
             unsigned rightpos = childpos + 1;
-            if (rightpos < size and not (array[childpos] < array[rightpos])) {
+            if (rightpos < size and not (cmp_lt(array[childpos], array[rightpos]))) {
                 childpos = rightpos;
             }
             // manually update here
