@@ -45,7 +45,6 @@ void hidden_paths(Graph<T> const& g) {
     build_data_structures(g, heap, p);
     while (!heap.empty() and heap.top()->wt != std::numeric_limits<double>::max()) {
         HeapEntry* min = heap.pop();
-        std::cout<<min->wt<<'\n';
         unsigned u = min->u, v = min->v;
 
         if (g.is_edge(u, v)) {

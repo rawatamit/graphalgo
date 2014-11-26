@@ -96,7 +96,6 @@ def hidden_paths(G):
     H, P, E = build_data_structures(G)
     while len(H) != 0 and H[0].w != INF:
         e = heappop(H)
-        print e.w
         if is_edge(G, e.u, e.v):
             E[e.v].append((e.u, e.v))
             for z in V(G):
