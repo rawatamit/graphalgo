@@ -29,47 +29,10 @@ public:
         return u >= 0 and u < number_of_vertices();
     }
 
-    bool is_edge(T const& u, T const& v) const {
-        // make sure the vertices are valid
-        assert(is_node(u) and is_node(v));
-
-        // get the integer mappings
-        unsigned iu = vertexmap[u];
-        unsigned iv = vertexmap[v];
-        for (auto edge : adj[iu]) {
-            if (edge.other(iu) == iv)
-                return true;
-        }
-        return false;
-    }
-
-    bool is_edge(unsigned u, unsigned  v) const {
-        // make sure the vertices are valid
-        assert(is_node(u) and is_node(v));
-
-        for (auto edge : adj[u]) {
-            if (edge.other(u) == v)
-                return true;
-        }
-
-        return false;
-    }
-
     double edge_weight(T const& u, T const& v) const {
         // make sure the vertices are valid
         assert(is_node(u) and is_node(v));
-
-        // get the integer mappings
-        unsigned iu = vertexmap[u];
-        unsigned iv = vertexmap[v];
-        if (iu == iv) return 0.0;
-        for (auto edge : adj[iu]) {
-            if (edge.v == iv)
-                return edge.weight();
-        }
-
-        // vertices are not connected
-        return std::numeric_limits<double>::max();
+        return edge_weight(vertexmap[u], vertexmap[v]);
     }
 
     double edge_weight(unsigned u, unsigned v) const {

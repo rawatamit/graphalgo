@@ -8,20 +8,19 @@
 
 struct PathEntry {
     double weight;
-    int first;
-    HeapEntry* heapptr;
-
+    unsigned first;
+    HeapEntry* heaptr;
+    
     PathEntry() :
-        weight(std::numeric_limits<double>::max()),
-        first(-1), heapptr(nullptr) {
+      weight(std::numeric_limits<double>::max()), first(0), heaptr(nullptr) {
+    }
+    
+    PathEntry(double weight_, unsigned first_) :
+      weight(weight_), first(first_), heaptr(nullptr) {
     }
 
-    PathEntry(double weight_, HeapEntry* heapptr_) :
-        weight(weight_), first(-1), heapptr(heapptr_) {
-    }
-
-    PathEntry(double weight_, int first_, HeapEntry* heapptr_) :
-        weight(weight_), first(first_), heapptr(heapptr_) {
+    PathEntry(double weight_, unsigned first_, HeapEntry* heaptr_) :
+        weight(weight_), first(first_), heaptr(heaptr_) {
     }
 
     virtual ~PathEntry() {
@@ -44,9 +43,6 @@ public:
         paths = new PathEntry*[n];
         for (auto i = 0; i < n; ++i) {
             paths[i] = new PathEntry[n];
-            for (auto j = 0; j < n; ++j) {
-                paths[i][j] = PathEntry();
-            }
         }
     }
 
@@ -66,10 +62,11 @@ public:
         return paths[u][v];
     }
 
-    void set(unsigned u, unsigned v, double wt, HeapEntry* heapptr) {
+    void set(unsigned u, unsigned v, double wt, HeapEntry* heaptr) {
         assert(u >= 0 and u < n and v >= 0 and v < n);
+	paths[u][v].first = u;
         paths[u][v].weight = wt;
-        paths[u][v].heapptr = heapptr;
+        paths[u][v].heaptr = heaptr;
     }
 };
 

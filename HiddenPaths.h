@@ -14,9 +14,9 @@ void build_data_structures(Graph<T> const& g, Heap& heap, ShortestPaths& p) {
     for (unsigned u = 0; u < numv; ++u) {
         for (unsigned v = 0; v < numv; ++v) {
             double wt = g.edge_weight(u, v);
-            HeapEntry* heapptr = new HeapEntry(u, v, wt);
-            if (u != v) heap.add(heapptr);
-            p.set(u, v, wt, heapptr);
+            HeapEntry* heaptr = new HeapEntry(u, v, wt);
+            if (u != v) heap.add(heaptr);
+            p.set(u, v, wt, heaptr);
         }
     }
     heap.heapify();
@@ -30,8 +30,12 @@ inline void update(unsigned x, unsigned y, unsigned z, Heap& heap, ShortestPaths
     if (xz.weight > xy.weight + yz.weight) {
         xz.weight = xy.weight + yz.weight;
         xz.first = y;
-        heap.decreasekey(xz.heapptr, xz.weight);
+        heap.decreasekey(xz.heaptr, xz.weight);
     }
+}
+
+inline bool is_edge(unsigned u, unsigned v, ShortestPaths const& p) {
+  return p.get(u, v).first == u;
 }
 
 } // anonymous namespace
@@ -48,7 +52,7 @@ void hidden_paths(Graph<T> const& g) {
         HeapEntry* min = heap.pop();
         unsigned u = min->u, v = min->v;
 
-        if (g.is_edge(u, v)) {
+        if (is_edge(u, v, p)) {
             E[v].push_back(u);
             for (auto z = 0; z < numv; ++z) {
                 update(u, v, z, heap, p);
