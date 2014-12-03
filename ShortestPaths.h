@@ -24,6 +24,7 @@ struct PathEntry {
   }
 
   virtual ~PathEntry() {
+    delete heaptr;
   }
 
   friend std::ostream& operator<<(std::ostream& o, PathEntry const& pe) {

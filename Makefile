@@ -1,6 +1,6 @@
 APP=hiddenpath
 CXX=clang++
-CXXFLAGS=-Wall -g -std=c++11
+CXXFLAGS=-Wall -O3 -std=c++11 -DNDEBUG
 OBJS=main.o
 
 $(APP):$(OBJS)
@@ -14,4 +14,3 @@ $(APP):
 clean:
 	rm -f $(APP) $(OBJS)
 .PHONY: clean
-

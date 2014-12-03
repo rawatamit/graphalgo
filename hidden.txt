@@ -1,7 +1,8 @@
-a b 2
-a c 5
-a d 1
-b c 2
-d c 2
-c e 1
-e a 8
+p sp 5 7
+a a b 2
+a a c 5
+a a d 1
+a b c 2
+a d c 2
+a c e 1
+a e a 8

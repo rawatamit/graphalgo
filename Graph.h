@@ -7,10 +7,12 @@
 #include <limits>
 #include <cassert>
 
-typedef std::vector<Edge> AdjListType;
-
 template <typename T>
 class Graph {
+// useful typedefs
+public:
+  typedef std::vector<Edge> AdjListType;
+
 private:
   std::vector<T> intovertex; // integers to vertices mapping
   std::map<T, unsigned> vertexmap; // vertices to integers mapping
@@ -21,6 +23,9 @@ public:
   }
 
   ~Graph() {
+    intovertex.clear();
+    vertexmap.clear();
+    adj.clear();
   }
 
   bool is_node(T const& u) const {
