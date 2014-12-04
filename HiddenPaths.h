@@ -9,23 +9,23 @@
 namespace {
 
 template<typename T>
-void build_data_structures(Graph<T> const& g, Heap& heap, ShortestPaths& p) {
+void build_data_structures(Graph<T> const& g, Heap& heap, ShortestPaths* p) {
   unsigned numv = g.number_of_vertices();
   for (unsigned u = 0; u < numv; ++u) {
     for (unsigned v = 0; v < numv; ++v) {
       double wt = g.edge_weight(u, v);
       HeapEntry* heaptr = new HeapEntry(u, v, wt);
       if (u != v) heap.add(heaptr);
-      p.set(u, v, wt, heaptr);
+      p->set(u, v, wt, heaptr);
     }
   }
   heap.heapify();
 }
 
-inline void update(unsigned x, unsigned y, unsigned z, Heap& heap, ShortestPaths& p) {
-  PathEntry& xz = p.get(x, z);
-  PathEntry& xy = p.get(x, y);
-  PathEntry& yz = p.get(y, z);
+inline void update(unsigned x, unsigned y, unsigned z, Heap& heap, ShortestPaths* p) {
+  PathEntry& xz = p->get(x, z);
+  PathEntry& xy = p->get(x, y);
+  PathEntry& yz = p->get(y, z);
 
   if (xz.weight > xy.weight + yz.weight) {
     xz.weight = xy.weight + yz.weight;
@@ -34,17 +34,18 @@ inline void update(unsigned x, unsigned y, unsigned z, Heap& heap, ShortestPaths
   }
 }
 
-inline bool is_edge(unsigned u, unsigned v, ShortestPaths const& p) {
-  return p.get(u, v).first == u;
+inline bool is_edge(unsigned u, unsigned v, ShortestPaths const* p) {
+  return p->get(u, v).first == u;
 }
 
 } // anonymous namespace
 
 template<typename T>
-void hidden_paths(Graph<T> const& g) {
+ShortestPaths const* hidden_paths(Graph<T> const& g) {
+  unsigned m_star = 0;
   unsigned numv = g.number_of_vertices();
   Heap heap(numv*numv);
-  ShortestPaths p(numv);
+  ShortestPaths* p = new ShortestPaths(numv);
   std::vector<unsigned>* E = new std::vector<unsigned>[numv];
 
   build_data_structures(g, heap, p);
@@ -54,6 +55,7 @@ void hidden_paths(Graph<T> const& g) {
 
       if (is_edge(u, v, p)) {
 	E[v].push_back(u);
+	++m_star; // keep track of m*
 	for (auto z = 0; z < numv; ++z) {
 	    update(u, v, z, heap, p);
 	}
@@ -64,13 +66,8 @@ void hidden_paths(Graph<T> const& g) {
       }
   }
 
-  for (auto u = 0; u < numv; ++u) {
-    for (auto v : E[u]) {
-	std::cout << g.vertex_mapping(v) << ' ' << g.vertex_mapping(u) << ' ' << p.get(v, u) << '\n';
-    }
-  }
-
   delete[] E;
+  return p;
 }
 
 #endif

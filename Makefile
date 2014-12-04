@@ -1,6 +1,6 @@
 APP=hiddenpath
 CXX=clang++
-CXXFLAGS=-Wall -O3 -std=c++11 -DNDEBUG
+CXXFLAGS=-Wall -g -O0 -std=c++11
 OBJS=main.o
 
 $(APP):$(OBJS)

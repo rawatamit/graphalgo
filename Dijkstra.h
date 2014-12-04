@@ -2,52 +2,66 @@
 #define DIJKSTRA_H
 
 #include "Graph.h"
+#include "Heap.h"
 #include <limits>
 #include <queue>
+#include <iostream>
 
 template<typename T>
-void dijkstra(Graph<T> const& g, T const& s) {
-  typedef std::pair<double, unsigned> pdi;
+double** dijkstra_all(Graph<T> const& g) {
+  unsigned numv = g.number_of_vertices();
+  double** sp = new double*[numv];
+  
+  // run dijkstra from all sources
+  for (unsigned u = 0; u < numv; ++u)
+    sp[u] = dijkstra(g, u);
+  
+  return sp;
+}
 
+template<typename T>
+double* dijkstra(Graph<T> const& g, T const& s) {
+  return dijkstra(g, g.integer_mapping(s));
+}
+
+template<typename T>
+double* dijkstra(Graph<T> const& g, unsigned s) {
   unsigned numv = g.number_of_vertices();
   double* distTo = new double[numv];
   unsigned* parent = new unsigned[numv];
-
-  for (unsigned i = 0; i < numv; ++i) {
-    distTo[i] = std::numeric_limits<double>::max();
-    parent[i] = i;
+  Heap pq(numv);
+  HeapEntry** entries = new HeapEntry*[numv];
+  
+  for (unsigned u = 0; u < numv; ++u) {
+    distTo[u] = std::numeric_limits<double>::max();
+    parent[u] = u;
+    entries[u] = new HeapEntry(u, u, std::numeric_limits<double>::max());
+    pq.add(entries[u]);
   }
-
-  std::priority_queue<pdi, std::vector<pdi>, std::greater<pdi>> pq;
-  unsigned is = g.integer_mapping(s);
-  pq.push(std::make_pair(0.0, is));
-  distTo[is] = 0.0;
+  
+  entries[s]->wt = 0.0;
+  pq.heapify();
+  distTo[s] = 0.0;
   while (!pq.empty()) {
-    pdi p = pq.top(); pq.pop();
-    unsigned u = p.second;
+    HeapEntry* p = pq.pop();
+    unsigned u = p->u;
 
-    for (auto edge : g.adj_list(u)) {
+    for (auto const& edge : g.adj_list(u)) {
       unsigned v = edge.other(u);
-      if (distTo[v] > distTo[u] + edge.weight()) {
-	distTo[v] = distTo[u] + edge.weight();
-	parent[v] = u;
-	pq.push(std::make_pair(distTo[v], v));
+      double newdist = distTo[u] + edge.weight();
+      if (distTo[v] > newdist) {
+	distTo[v] = newdist;
+	//parent[v] = u;
+	pq.decreasekey(entries[v], newdist);
       }
     }
   }
-
-#if 0
-    for (unsigned i = 0; i < numv; ++i) {
-        if (distTo[i] != std::numeric_limits<double>::max()) {
-            std::cout << g.vertex_mapping(parent[i]) << " "
-                      << g.vertex_mapping(i) << " "
-                      << distTo[i] << "\n";
-        }
-    }
-#endif
-
-  delete[] distTo;
+  
+  for (unsigned u = 0; u < numv; ++u)
+    delete entries[u];
+  delete[] entries;
   delete[] parent;
+  return distTo;
 }
 
 #endif

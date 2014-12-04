@@ -24,9 +24,6 @@ def add_node(G, u):
     if u not in V(G):
         V(G).add(u)
 
-def is_edge(G, u, v):
-    return v in adj(G)[u]
-
 def add_directed_weighted_edge(G, u, v, w):
     try:
         adj(G)[u][v] = w
@@ -96,7 +93,7 @@ def hidden_paths(G):
     H, P, E = build_data_structures(G)
     while len(H) != 0 and H[0].w != INF:
         e = heappop(H)
-        if is_edge(G, e.u, e.v):
+        if P[e.u][e.v] == None: # (u, v) is an edge
             E[e.v].append((e.u, e.v))
             for z in V(G):
                 update(e.u, e.v, z, H, P)
@@ -121,7 +118,7 @@ def main():
     P = hidden_paths(G)
     for u in V(G):
         for v in V(G):
-            print "({0} ~> {1}) : {2}".format(u, v, path_weight(P, u, v))
+            print("({0} ~> {1}) : {2}".format(u, v, path_weight(P, u, v)))
 
 if __name__ == '__main__':
     main()

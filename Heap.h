@@ -9,16 +9,16 @@ struct HeapEntry {
   unsigned index; // index of the array in the heap data structure
 
   HeapEntry(unsigned u_, unsigned v_, double wt_) :
-      u(u_), v(v_), wt(wt_), index(-1) {
+    u(u_), v(v_), wt(wt_), index(-1) {
   }
 
   virtual ~HeapEntry() {
   }
 
   friend bool operator<(HeapEntry const& a, HeapEntry const& b) {
-      if (a.wt < b.wt) return true;
-      if (b.wt < a.wt) return false;
-      return false;
+    if (a.wt < b.wt) return true;
+    if (b.wt < a.wt) return false;
+    return false;
   }
 };
 
@@ -47,14 +47,14 @@ private:
   void siftdown(unsigned startpos, unsigned pos) {
     HeapEntry* item = array[pos];
     while (pos > startpos) {
-	unsigned parentpos = (pos - 1) >> 1;
-	HeapEntry* parent = array[parentpos];
-	if (cmp_lt(item, parent)) {
-	    update(parent, pos);
-	    pos = parentpos;
-	    continue;
-	}
-	break;
+      unsigned parentpos = (pos - 1) >> 1;
+      HeapEntry* parent = array[parentpos];
+      if (cmp_lt(item, parent)) {
+	update(parent, pos);
+	pos = parentpos;
+	continue;
+      }
+      break;
     }
     update(item, pos);
   }
@@ -64,15 +64,15 @@ private:
     HeapEntry* item = array[pos];
     unsigned childpos = 2 * pos + 1;
     while (childpos < size) {
-	unsigned rightpos = childpos + 1;
-	if (rightpos < size and not (cmp_lt(array[childpos], array[rightpos]))) {
-	    childpos = rightpos;
-	}
-	// manually update here
-	array[pos] = array[childpos];
-	array[childpos]->index = pos;
-	pos = childpos;
-	childpos = 2 * pos + 1;
+      unsigned rightpos = childpos + 1;
+      if (rightpos < size and not (cmp_lt(array[childpos], array[rightpos]))) {
+	childpos = rightpos;
+      }
+      // manually update here
+      array[pos] = array[childpos];
+      array[childpos]->index = pos;
+      pos = childpos;
+      childpos = 2 * pos + 1;
     }
     update(item, pos);
     siftdown(startpos, pos);
@@ -84,7 +84,7 @@ public:
   }
 
   virtual ~Heap() {
-      delete[] array;
+    delete[] array;
   }
 
   void add(HeapEntry* item) {
@@ -102,8 +102,8 @@ public:
 
     // only a single element
     if (size == 1) {
-	size = 0;
-	return array[0];
+      size = 0;
+      return array[0];
     }
 
     HeapEntry* lastitem = array[--size];
@@ -120,14 +120,14 @@ public:
 
   void heapify() {
     for (int i = size / 2; i >= 0; --i) {
-	siftup((unsigned)i);
+      siftup((unsigned)i);
     }
   }
 
   void decreasekey(HeapEntry* item, double wt) {
     assert(wt <= item->wt);
     item->wt = wt;
-    siftup(item->index);
+    siftdown(0, item->index);
   }
 };
 
