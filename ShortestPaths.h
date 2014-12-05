@@ -42,13 +42,13 @@ private:
 public:
   ShortestPaths(unsigned n_) : n(n_) {
       paths = new PathEntry*[n];
-      for (auto i = 0; i < n; ++i) {
+      for (unsigned i = 0; i < n; ++i) {
 	  paths[i] = new PathEntry[n];
       }
   }
 
   virtual ~ShortestPaths() {
-      for (auto i = 0; i < n; ++i)
+      for (unsigned i = 0; i < n; ++i)
 	  delete[] paths[i];
       delete[] paths;
   }

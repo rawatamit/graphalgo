@@ -82,17 +82,17 @@ int main(int argc, char* argv[]) {
   fprintf(stderr, "dijkstra took %lf\n", (double)(end-begin)/(CLOCKS_PER_SEC));
   
   unsigned numv = g.number_of_vertices();
-  for (auto u = 0; u < numv; ++u) {
-    for (auto v = 0; v < numv; ++v) {
-      std::cout //<< g.vertex_mapping(u) << ' ' << g.vertex_mapping(v) << ' '
+  for (unsigned u = 0; u < numv; ++u) {
+    for (unsigned v = 0; v < numv; ++v) {
+      /*std::cout //<< g.vertex_mapping(u) << ' ' << g.vertex_mapping(v) << ' '
 		//<< sp_dijkstra[u][v] << '\n';// << " : "
 		<< g.vertex_mapping(u) << ' ' << g.vertex_mapping(v) << ' '
-		<< sp_karger->get(u, v).weight << '\n';
-      /*if (sp_karger->get(u, v).weight != sp_dijkstra[u][v]) {
+		<< sp_karger->get(u, v).weight << '\n';*/
+      if (sp_karger->get(u, v).weight != sp_dijkstra[u][v]) {
 	fprintf(stderr, "failed for %s %s, dijkstra gives %lf, karger gives %lf\n",
 		  g.vertex_mapping(u).c_str(), g.vertex_mapping(v).c_str(),
 		  sp_dijkstra[u][v], sp_karger->get(u, v).weight);
-      }*/
+      }
     }
   }
   

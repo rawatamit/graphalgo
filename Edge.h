@@ -10,17 +10,17 @@ private:
   double wt;
 
 public:
-  Edge(int from_, int to_) : from(from_), to(to_), wt(1.0) {
+  Edge(unsigned from_, unsigned to_) : from(from_), to(to_), wt(1.0) {
   }
 
-  Edge(int from_, int to_, double wt_) : from(from_), to(to_), wt(wt_) {
+  Edge(unsigned from_, unsigned to_, double wt_) : from(from_), to(to_), wt(wt_) {
   }
 
-  int either() const {
+  unsigned either() const {
     return from;
   }
 
-  int other(int w) const {
+  unsigned other(unsigned w) const {
     return w == from ? to : from;
   }
 
