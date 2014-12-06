@@ -1,6 +1,8 @@
 #include "Graph.h"
 #include "Dijkstra.h"
 #include "HiddenPaths.h"
+#include "AccumulateBasic.h"
+#include "TopologicalSort.h"
 #include <ctime>
 #include <cstdio>
 #include <iostream>
@@ -47,6 +49,7 @@ void read_graph(Graph<std::string>& g, FILE* in) {
     sscanf(buf, "%s %s %lf", u, v, &wt);
     g.add_node(u);
     g.add_node(v);
+    if (wt == 0.0) wt = 1.0;
     g.add_directed_weighted_edge(u, v, wt);
   }
 }
@@ -68,11 +71,11 @@ int main(int argc, char* argv[]) {
   Graph<std::string> g;
   read_graph(g, in);
   fclose(in);
-  //g.print(std::cout);
-  
+  unsigned numv = g.number_of_vertices();
   clock_t begin, end;
   begin = clock();
-  ShortestPaths const* sp_karger = hidden_paths(g);
+  std::vector<unsigned>* E = new std::vector<unsigned>[numv];
+  ShortestPaths const* sp_karger = hidden_paths(g, E);
   end = clock();
   fprintf(stderr, "karger took %lf\n", (double)(end-begin)/(CLOCKS_PER_SEC));
   
@@ -81,7 +84,6 @@ int main(int argc, char* argv[]) {
   end = clock();
   fprintf(stderr, "dijkstra took %lf\n", (double)(end-begin)/(CLOCKS_PER_SEC));
   
-  unsigned numv = g.number_of_vertices();
   for (unsigned u = 0; u < numv; ++u) {
     for (unsigned v = 0; v < numv; ++v) {
       /*std::cout //<< g.vertex_mapping(u) << ' ' << g.vertex_mapping(v) << ' '
@@ -89,13 +91,29 @@ int main(int argc, char* argv[]) {
 		<< g.vertex_mapping(u) << ' ' << g.vertex_mapping(v) << ' '
 		<< sp_karger->get(u, v).weight << '\n';*/
       if (sp_karger->get(u, v).weight != sp_dijkstra[u][v]) {
-	fprintf(stderr, "failed for %s %s, dijkstra gives %lf, karger gives %lf\n",
-		  g.vertex_mapping(u).c_str(), g.vertex_mapping(v).c_str(),
-		  sp_dijkstra[u][v], sp_karger->get(u, v).weight);
+        fprintf(stderr, "failed for %s %s, dijkstra gives %lf, karger gives %lf\n",
+                  g.vertex_mapping(u).c_str(), g.vertex_mapping(v).c_str(),
+                  sp_dijkstra[u][v], sp_karger->get(u, v).weight);
       }
+      
+      if (sp_karger->get(u, v).sigma > 1)
+      //sp_karger->get(u, v).sigma sp_karger->get(u, v).weight
+          fprintf(stdout, "%s %s %u\n", g.vertex_mapping(u).c_str(),
+            g.vertex_mapping(v).c_str(),
+            sp_karger->get(u, v).sigma);
     }
   }
   
+  float* betweenness=new float[numv];
+  for(unsigned u = 0; u < numv; ++u)
+  {
+    std::vector<unsigned>* S = dist_sort(sp_karger, numv, u);
+    accumulate_basic(g,betweenness,S,sp_karger,E,u);
+  }
+  
+  for (unsigned u = 0; u < numv; ++u)
+     fprintf(stdout, "%s %f\n", g.vertex_mapping(u).c_str(), betweenness[u]);
+
   delete sp_karger;
   
   for (unsigned u = 0; u < numv; ++u)

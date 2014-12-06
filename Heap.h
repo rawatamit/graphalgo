@@ -87,10 +87,18 @@ public:
     delete[] array;
   }
 
+  // simply add the item to the end of the heap
   void add(HeapEntry* item) {
     assert(size >= 0 and size < capacity);
     update(item, size);
     ++size;
+  }
+  
+  // add the item and maintain the heap invariant
+  void add_entry(HeapEntry* item) {
+    assert(size >= 0 and size < capacity);
+    add(item);
+    decreasekey(item, item->wt);
   }
 
   bool empty() const {
