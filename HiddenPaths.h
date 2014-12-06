@@ -1,10 +1,9 @@
 #ifndef HIDDEN_PATHS_H
 #define HIDDEN_PATHS_H
 
-#include <vector>
-#include <iostream>
-#include "Heap.h"
 #include "ShortestPaths.h"
+#include "Heap.h"
+#include <vector>
 
 namespace {
 
@@ -76,15 +75,15 @@ ShortestPaths const* hidden_paths(Graph<T> const& g, std::vector<unsigned>* E) {
       unsigned u = min->u, v = min->v;
 
       if (is_edge(u, v, p)) {
-	E[v].push_back(u);
-	++m_star; // keep track of m*
-	for (auto z = 0; z < numv; ++z) {
-	    update(u, v, z, &heap, p);
-	}
+        E[v].push_back(u);
+        ++m_star; // keep track of m*
+        for (auto z = 0; z < numv; ++z) {
+            update(u, v, z, &heap, p);
+        }
       }
 
       for (auto t : E[u]) {
-	update(t, u, v, &heap, p);
+        update(t, u, v, &heap, p);
       }
   }
 

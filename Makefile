@@ -1,17 +1,25 @@
 APP=hiddenpath
-CXX=g++
+CXX=clang++
 CXXFLAGS=-Wall -g -O3 -DNDEBUG -std=c++11
-OBJS=main.o
-# accumulateBasic.o topologicalSort.o
-# accumulateBasic.o: accumulateBasic.cc
-# topologicalSort.o: topologicalSort.cc
-$(APP):$(OBJS)
+OBJS=main.o TopologicalSort.o PathEntry.o ShortestPaths.o HeapEntry.o Heap.o
+
+$(APP): $(OBJS)
+AccumulateBasic.o: AccumulateBasic.cc AccumulateBasic.h
+TopologicalSort.o: TopologicalSort.cc TopologicalSort.h
+PathEntry.o: PathEntry.cc PathEntry.h
+ShortestPaths.o: ShortestPaths.cc ShortestPaths.h
+HeapEntry.o: HeapEntry.cc HeapEntry.h
+Heap.o: Heap.cc Heap.h
 main.o: main.cc Edge.h Graph.h\
 	Heap.h ShortestPaths.h\
-	Dijkstra.h HiddenPaths.h
+	Dijkstra.h HiddenPaths.h \
+	TopologicalSort.h AccumulateBasic.h
 
 $(APP):
-	$(CXX) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+%.o:
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(APP) $(OBJS)
